@@ -20,24 +20,29 @@ export type Headers = Record<string, string>;
 
 // Dia 1
 export function parseUrl(url: string): UrlParts {
-  const u = new URL(url);
+  const urlObj = new URL(url);
   return {
-    protocol: u.protocol,
-    host: u.host,
-    pathname: u.pathname,
-    search: u.search,
-    query: Array.from(u.searchParams.entries()),
+    protocol: urlObj.protocol,
+    host: urlObj.host,
+    pathname: urlObj.pathname,
+    search: urlObj.search,
+    query: Array.from(urlObj.searchParams.entries()),
   };
 }
 
 // Dia 2
 export function classifyStatus(code: number): StatusCategory {
-  throw new Error("Pendiente de implementar");
+  if (code >= 100 && code <= 199) return "1xx Informativo";
+  if (code >= 200 && code <= 299) return "2xx Éxito";
+  if (code >= 300 && code <= 399) return "3xx Redirección";
+  if (code >= 400 && code <= 499) return "4xx Error del cliente";
+  if (code >= 500 && code <= 599) return "5xx Error del servidor";
+  return "Desconocido";
 }
 
 // Dia 3
 export function parseHeaders(text: string): Headers {
-  throw new Error("Pendiente de implementar");
+  throw new Error("Not implemented");
 }
 
 // Dia 3
@@ -46,7 +51,7 @@ export function summarizeRequest(
   status: number,
   headersText: string,
 ): string {
-  throw new Error("Pendiente de implementar");
+  throw new Error("Not implemented");
 }
 
 if (require.main === module) {
