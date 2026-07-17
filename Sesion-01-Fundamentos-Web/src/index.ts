@@ -42,7 +42,16 @@ export function classifyStatus(code: number): StatusCategory {
 
 // Dia 3
 export function parseHeaders(text: string): Headers {
-  throw new Error("Not implemented");
+  const headers: Headers = {};
+  for (const line of text.split("\n")) {
+    const index = line.indexOf(":");
+    if (index === -1) continue;
+    const name = line.slice(0, index).trim();
+    const value = line.slice(index + 1).trim();
+    if (name === "") continue;
+    headers[name] = value;
+  }
+  return headers;
 }
 
 // Dia 3
@@ -51,7 +60,23 @@ export function summarizeRequest(
   status: number,
   headersText: string,
 ): string {
-  throw new Error("Not implemented");
+  const parts = parseUrl(url);
+  const category = classifyStatus(status);
+  const headers = parseHeaders(headersText);
+
+  const headerLines = Object.entries(headers)
+    .map(([name, value]) => `  - ${name}: ${value}`)
+    .join("\n");
+
+  return [
+    "Resumen de la peticion",
+    `URL: ${url}`,
+    `Host: ${parts.host}`,
+    `Path: ${parts.pathname}`,
+    `Status: ${status} (${category})`,
+    "Headers:",
+    headerLines || "  (ninguna)",
+  ].join("\n");
 }
 
 if (require.main === module) {
