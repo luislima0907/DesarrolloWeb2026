@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200">
+  <rect width="400" height="200" fill="#2c3e50"/>
+  <circle cx="200" cy="100" r="60" fill="#f2c14e"/>
+  <text x="200" y="180" font-size="16" fill="white" text-anchor="middle">Imagen local</text>
+</svg>
