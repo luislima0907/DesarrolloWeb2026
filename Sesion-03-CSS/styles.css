@@ -1,14 +1,72 @@
-/* TODO: Reset y estilos base */
+/* Reset y estilos base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #fafafa;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
 
 /* TODO: Galería de productos */
 /* Desktop (>=1024px): 3 columnas usando CSS Grid */
 /* Mobile (<768px): 1 columna con scroll vertical */
 
-/* TODO: Estilo de cada tarjeta de producto */
-/* - Imagen ocupa el ancho completo de la tarjeta */
-/* - Nombre del producto en negrita */
-/* - Precio destacado */
-/* - Botón "Comprar" estilizado con hover effect */
+/* Estilo de cada tarjeta de producto */
+.producto {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: white;
+    margin-bottom: 1.5rem;
+}
+
+.producto img {
+    width: 100%;
+    display: block;
+}
+
+.producto-info {
+    padding: 1rem;
+}
+
+.producto-info h2 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.precio {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2c7a2c;
+    margin-bottom: 0.75rem;
+}
+
+.btn-comprar {
+    width: 100%;
+    padding: 0.6rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #2c3e50;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
 
 /* TODO: To-Do List */
 /* - Lista sin marcadores (list-style: none) */
