@@ -75,6 +75,16 @@ h1 {
     color: white;
     font-size: 1rem;
     cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-comprar:hover {
+    background-color: #1f2c38;
+}
+
+.btn-comprar:focus-visible {
+    outline: 2px solid #2c7a2c;
+    outline-offset: 2px;
 }
 
 /* To-Do List */
