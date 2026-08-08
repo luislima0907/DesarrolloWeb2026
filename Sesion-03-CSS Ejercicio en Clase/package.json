@@ -1,0 +1,11 @@
+{
+  "name": "tarea-css-ejercicio-en-clase",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Tarea: Ejercicio en clase con CSS — Desarrollo Web Sesión 3",
+  "scripts": {
+    "serve": "npx http-server -p 8080"
+  },
+  "keywords": ["umg", "css", "html", "tarea"],
+  "license": "UNLICENSED"
+}
