@@ -59,8 +59,10 @@ export function eliminarTarea(id) {
  * @returns {boolean}
  */
 export function toggleTarea(id) {
-    // TODO: recorrer `tareas` y cambiar `completada` de la que coincida.
-    // Devuelve true si la encontró.
+    const tarea = tareas.find((t) => t.id === id);
+    if (!tarea) return false;
+    tarea.completada = !tarea.completada;
+    return true;
 }
 
 /**
