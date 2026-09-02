@@ -4,7 +4,7 @@ import { existsSync, mkdtempSync, readFileSync } from 'node:fs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { resolve, dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
@@ -15,9 +15,10 @@ let tmpDir;
 
 before(async () => {
     tmpDir = mkdtempSync(join(tmpdir(), 'dw-s6-'));
-    app = await import(resolve(root, 'src/app.js'));
+    // Cambiado para usar pathToFileURL porque no me leía bien los archivos en el proyecto a la hora de hacer npm test en Windows (ERR_UNSUPPORTED_ESM_URL_SCHEME con rutas C:\)
+    app = await import(pathToFileURL(resolve(root, 'src/app.js')).href);
     // El barrel debe exportar lo mismo que app.js
-    index = await import(resolve(root, 'src/index.js'));
+    index = await import(pathToFileURL(resolve(root, 'src/index.js')).href);
 });
 
 // ===========================================================
@@ -25,10 +26,12 @@ before(async () => {
 // ===========================================================
 describe('Estructura del proyecto', () => {
     it('src/app.js debe existir', () => {
+        // Cambiado para usar pathToFileURL porque no me leía bien los archivos en el proyecto a la hora de hacer npm test en Windows (ERR_UNSUPPORTED_ESM_URL_SCHEME con rutas C:\)
         assert.ok(existsSync(resolve(root, 'src/app.js')), 'src/app.js no encontrado');
     });
 
     it('src/math.js debe existir', () => {
+        // Cambiado para usar pathToFileURL porque no me leía bien los archivos en el proyecto a la hora de hacer npm test en Windows (ERR_UNSUPPORTED_ESM_URL_SCHEME con rutas C:\)
         assert.ok(existsSync(resolve(root, 'src/math.js')), 'src/math.js no encontrado');
     });
 
