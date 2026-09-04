@@ -15,7 +15,7 @@
 
 import { createReadStream, createWriteStream } from 'node:fs';
 import { pipeline } from 'node:stream/promises';
-import { Readable } from 'node:stream';
+import { Readable, Transform } from 'node:stream';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -35,31 +35,6 @@ export function generarId() {
     return `r-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
 }
 
-// =====================================================
-// TODO: implementa las siguientes funciones
-// =====================================================
-
-/**
- * Componentes y módulos.
- *
- * TODO 1: crea un módulo `src/math.js` (named exports) con:
- *   - const PI = 3.14159
- *   - function sumar(a, b)
- *   - function restar(a, b)
- *
- * TODO 2: crea un módulo `src/logger.js` (default export) con:
- *   - default function registrarProceso(msg) → string con formato
- *     `[fecha ISO] msg` (solo devuelve el string, no lo imprime)
- *
- * TODO 3: en `src/index.js` re-exporta (barrel exports) todo lo anterior:
- *   export { PI, sumar, restar } from "./math.js";
- *   export { default as logger } from "./logger.js";
- *   export { ... } from "./app.js";   // las funciones públicas
- *
- * Cuando termines, corre el test "Estructura de módulos"
- * para verificar que los re-exports funcionan.
- */
-
 /**
  * Filtra las líneas de un archivo de log que contienen un texto y
  * escribe el resultado en otro archivo, usando Streams + pipeline.
@@ -73,7 +48,31 @@ export function generarId() {
  * @returns {Promise<number>} cantidad de líneas que coincidieron (0 si no hay).
  */
 export async function filtrarLogs(origen, destino, texto) {
-    throw new Error('Not implemented: filtrarLogs');
+    let contador = 0;
+    let resto = '';
+    const filtro = new Transform({
+        transform(chunk, encoding, callback) {
+            const data = resto + chunk.toString();
+            const lineas = data.split('\n');
+            resto = lineas.pop();
+            for (const linea of lineas) {
+                if (linea.includes(texto)) {
+                    contador++;
+                    this.push(linea + '\n');
+                }
+            }
+            callback();
+        },
+        flush(callback) {
+            if (resto && resto.includes(texto)) {
+                contador++;
+                this.push(resto + '\n');
+            }
+            callback();
+        }
+    });
+    await pipeline(createReadStream(origen), filtro, createWriteStream(destino));
+    return contador;
 }
 
 /**
@@ -85,7 +84,13 @@ export async function filtrarLogs(origen, destino, texto) {
  * @returns {Promise<string[]>}
  */
 export async function leerLineas(ruta) {
-    throw new Error('Not implemented: leerLineas');
+    return new Promise((resolve, reject) => {
+        let datos = '';
+        const stream = createReadStream(ruta, { encoding: 'utf-8' });
+        stream.on('data', chunk => datos += chunk);
+        stream.on('error', reject);
+        stream.on('end', () => resolve(datos.split('\n').filter(l => l.length > 0)));
+    });
 }
 
 /**
