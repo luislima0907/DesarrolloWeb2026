@@ -46,10 +46,6 @@ function leerBody(req) {
     });
 }
 
-// =====================================================
-// TODO: implementa las siguientes funciones
-// =====================================================
-
 /**
  * Parsea los argumentos de la línea de comandos (process.argv).
  * Acepta: --nombre <valor> y --puerto <valor>.
@@ -177,7 +173,56 @@ export async function agregarMensaje(archivoDatos, texto) {
  * @returns {import('node:http').Server}
  */
 export function crearServidor(config = {}) {
-    throw new Error('Not implemented: crearServidor');
+    const archivoDatos = config.archivoDatos || 'data/mensajes.json';
+    const nombreApp = config.nombreApp || 'mensajes-api';
+    const logger = config.logger || crearLogger();
+    const server = http.createServer(async (req, res) => {
+        logger.registrar(`${req.method} ${req.url}`);
+        res.setHeader('Content-Type', 'application/json');
+        try {
+            if (req.method === 'GET' && req.url === '/') {
+                res.writeHead(200);
+                res.end(JSON.stringify({
+                    mensaje: `Hola desde ${nombreApp}`,
+                    hora: new Date().toISOString(),
+                    sistema: infoSistema()
+                }));
+            } else if (req.method === 'GET' && req.url === '/mensajes') {
+                const mensajes = await leerMensajes(archivoDatos);
+                res.writeHead(200);
+                res.end(JSON.stringify(mensajes));
+            } else if (req.method === 'POST' && req.url === '/mensajes') {
+                const body = await leerBody(req);
+                let data;
+                try {
+                    data = JSON.parse(body || '{}');
+                } catch {
+                    data = {};
+                }
+                const texto = data.texto;
+                if (!texto || texto.trim() === '') {
+                    res.writeHead(400);
+                    res.end(JSON.stringify({ error: 'texto es requerido' }));
+                    return;
+                }
+                const nuevo = await agregarMensaje(archivoDatos, texto);
+                if (!nuevo) {
+                    res.writeHead(400);
+                    res.end(JSON.stringify({ error: 'texto es requerido' }));
+                    return;
+                }
+                res.writeHead(201);
+                res.end(JSON.stringify(nuevo));
+            } else {
+                res.writeHead(404);
+                res.end(JSON.stringify({ error: 'Ruta no encontrada' }));
+            }
+        } catch {
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: 'Error interno' }));
+        }
+    });
+    return server;
 }
 
 /**
@@ -188,6 +233,15 @@ export function crearServidor(config = {}) {
  * @returns {import('node:http').Server}
  */
 export function iniciarServidor(config = {}) {
-    throw new Error('Not implemented: iniciarServidor');
+    const puerto = config.puerto || 3000;
+    const logger = config.logger || crearLogger();
+    if (!config.logger) {
+        logger.onRegistro((linea) => console.log(linea));
+    }
+    const server = crearServidor({ ...config, logger });
+    server.listen(puerto, () => {
+        logger.registrar(`Servidor en http://localhost:${puerto}`);
+    });
+    return server;
 }
 
