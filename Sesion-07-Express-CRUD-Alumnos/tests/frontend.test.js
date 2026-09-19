@@ -16,7 +16,7 @@ import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { JSDOM } from 'jsdom';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -84,7 +84,7 @@ beforeEach(async () => {
     global.Event = dom.window.Event;
 
     // Ejecutar app.js (cache-busting para re-ejecutarlo en cada test)
-    await import(`${join(publicDir, 'app.js')}?t=${Date.now()}-${Math.random()}`);
+    await import(`${pathToFileURL(join(publicDir, 'app.js')).href}?t=${Date.now()}-${Math.random()}`);
     dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
     await esperar();
 });
